@@ -1,0 +1,62 @@
+﻿.box{ border:1px solid #88A4CF; background-color:#E0EAF8; margin-top: 100px;}
+
+#chat, #prechat{padding:10px; width:100%; }
+span.me { font-weight: bold; background: #3174f3; border-radius: 15px; padding: 5px;}
+
+div { margin-top: 10px; }
+span.success { font-size: 25px; font-weight: bold; margin-left: 200px; color: orangered; background: white;     margin-top: -15px;}
+
+#log { padding:10px; height:335px; width:100%; background-color: white; overflow:auto;}
+#text { width: 91.4%; padding: 5px; height: 25px; }
+
+span.me { font-weight:bold; margin-left: 0px; padding: 5px 10px 5px 10px; display: inline-flex;}
+
+#send{ padding: 0 8px;}
+.input-form { padding: 10px; }
+
+span {
+    background: #c15d5d;
+    padding: 5px 10px 5px 10px;
+    color: white;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+img { border-radius: 50%; width: 28px; height: 28px; float: left; }
+
+div.account {
+    border: 5px solid darkgrey;
+    padding: 10px;
+    margin-top: 100px;
+    text-align: center;
+    border-top: 5px solid green;
+    /* border-bottom: 5px solid green; */
+    position: fixed;
+    right: 450px;
+        background: #f3f2f2;
+}
+
+b.name_acc{ color: red; font-weight: bold; font-size: 15px;}
+
+.container { width: 1170px; margin-top: -70px; }
+
+i.far.fa-smile { font-size: 20px; color: blue; padding-left: 10px;}
+b.vb { padding-left: 10px; }
+
+img.img_avatar { margin-right: 1px; }
+
+body { background: #26bda9; }
+
+@media (min-width: 414px) and (max-width: 768px){
+    div#acc { margin: -470px -450px 0px 0px; padding: 4px 10px 6px 10px; }
+}
+
+@media(max-width:414px){
+    .box { width: 358px; }
+
+    span.success { font-size: 18px; margin-left: 95px; text-align: center; }
+}
+
+@media (min-width: 768px) and (max-width:1024px){
+    div#acc.account { padding: 0px; }
+}

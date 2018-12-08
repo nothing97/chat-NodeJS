@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui" />
+	<meta name="msapplication-tap-highlight" content="no"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+	<link href="css/ext-all.css" rel="stylesheet" type="text/css" />
+	<link href="css/extjs.css" rel="stylesheet" type="text/css" />
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="js/fm.js"></script>
+	<script type="text/javascript" src="js/fm.websync.js"></script>
+	<!-- <script type="text/javascript" src="effect.js"></script> -->
+	<script>
+		function myFunction() {
+		    var person = prompt("Nhập nickname", "Hoàng97");
+		    document.getElementById("username").value=person; 
+		    document.getElementById("acc").innerHTML=
+		    'Xin chào '+ ': '+ '<b class="name_acc">'+ person +'</b>' + '<i class="far fa-smile"></i>'; 
+		    alert('nickname của bạn là: ' + person );
+		    alert('Bạn có thể chat ngay bây giờ :))');
+		}
+	</script>
+</head>
+	<body onload="myFunction()">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 box" style="padding: 0;">
+					<div id="chat">
+					    <div id="log">
+					    </div>	        
+					</div>
+					<div class="input-form">
+						<input type="hidden" autocomplete="off" value="" class="invalid" id="username" >
+					    <input type="hidden" autocomplete="off" value="room01" class="invalid" id="roomid">	    
+					    <input type="text" autocomplete="off" value="" class="invalid" id="text" placeholder="Chat now..." >
+					    <button class="btn btn-success btn-md value="Gửi" id="send">Gửi</button>
+					</div>
+				</div>
+
+				<div class="account col-md-2 col-xs-12" id="acc"></div>
+			</div>
+
+
+		</div>
+
+		<script>		
+			//Global variables
+			var webSyncHandleUrl = 'http://117.6.131.222:8089/websync.ashx';
+			var client = new fm.websync.client(webSyncHandleUrl);	
+			
+			fm.util.addOnLoad(function () {
+				
+				//init object chat between users a room 
+			    var chat = {
+			        alias: 'Unknown',
+			        clientId: 0,
+			        channels: {
+			            main: '/chat'
+			        },
+			        dom: {
+			            chat: {
+			                container: document.getElementById('chat'),
+			                text: document.getElementById('text'),
+			                log: document.getElementById('log'),
+			                send: document.getElementById('send'),
+			                username: document.getElementById('username'),
+			                roomid: document.getElementById('roomid')
+			            }
+			        },
+			        util: {
+			            start: function () {
+			                chat.alias = chat.dom.chat.username.value;
+			                chat.clientId = chat.dom.chat.roomid.value;
+			                //chat.util.hide(chat.dom.prechat.container);
+			                chat.util.show(chat.dom.chat.container);
+			                chat.util.scroll();
+			                chat.dom.chat.text.focus();
+			            },
+			            stopEvent: function (event) {
+			                if (event.preventDefault) {
+			                    event.preventDefault();
+			                } else {
+			                    event.returnValue = false;
+			                }
+			                if (event.stopPropagation) {
+			                    event.stopPropagation();
+			                } else {
+			                    event.cancelBubble = true;
+			                }
+			            },
+			            send: function () {
+			                if (chat.util.isEmpty(chat.dom.chat.text)) {
+			                    chat.util.setInvalid(chat.dom.chat.text);
+			                } else {
+			                    client.publish({
+			                        channel: '/' + chat.dom.chat.roomid.value,
+			                        data: {
+			                            alias: chat.alias,
+			                            text: chat.dom.chat.text.value
+			                        },
+			                        onSuccess: function (args) {
+			                            chat.util.clear(chat.dom.chat.text);
+			                        }
+			                    });
+			                }
+			            },
+			            show: function (el) {
+			                el.style.display = '';
+			            },
+			            hide: function (el) {
+			                el.style.display = 'none';
+			            },
+			            clear: function (el) {
+			                el.value = '';
+			            },
+			            observe: fm.util.observe,
+			            isEnter: function (e) {
+			                return (e.keyCode == 13);
+			            },
+			            isEmpty: function (el) {
+			                return (el.value == '');
+			            },
+			            setInvalid: function (el) {
+			                el.className = 'invalid';
+			            },
+			            clearLog: function () {
+			                chat.dom.chat.log.innerHTML = '';
+			            },
+			            logMessage: function (alias, text, me) {
+			                var html = '<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5SB0gcOqnaptWks7J6jNxc2tMw4SSwo704-RX4FZk7czdBTDINA" class="img_avatar">' + '<span';
+			                if (me) {
+			                    html += ' class="me"';
+			                }
+			                html += '>' + alias + '</span>' + '<b class="vb">'+ text+ '</b>'  ;
+
+			                // html += '>' + alias + ': ' + text + '</span>';
+
+
+
+
+			                chat.util.log(html);
+			            },
+			            logSuccess: function (text) {
+			                chat.util.log('<span class="success">' + text + '</span>');
+			            },
+			            logFailure: function (text) {
+			                chat.util.log('<span class="failure">' + text + '</span>');
+			            },
+			            log: function (html) {
+			                var div = document.createElement('div');
+			                div.innerHTML = html;
+			                chat.dom.chat.log.appendChild(div);
+			                chat.util.scroll();
+			            },
+			            scroll: function () {
+			                chat.dom.chat.log.scrollTop = chat.dom.chat.log.scrollHeight;
+			            }
+			        }
+			    };
+
+			    chat.util.observe(chat.dom.chat.send, 'click', function (e) {
+			        chat.util.start();
+			        chat.util.send();
+			    });
+
+			    chat.util.observe(chat.dom.chat.text, 'keydown', function (e) {
+			        if (chat.util.isEnter(e)) {
+			            chat.util.start();
+			            chat.util.send();
+			            chat.util.stopEvent(e);
+			        }
+			    });	    
+
+			    client.connect({
+			        onSuccess: function (args) {
+			            chat.clientId = args.clientId;
+			            chat.util.clearLog();
+			            //chat.util.logSuccess('Connected to WebSync.');
+			            //chat.util.show(chat.dom.prechat.container);
+			            chat.util.show(chat.dom.chat.container);
+			        },
+			        onFailure: function (args) {
+			        	//var username = args.getData().alias;
+			        	//var content = ''
+
+			            //chat.util.logSuccess('Could not connect to WebSync.');
+			        }
+			    });
+
+			    client.subscribe({
+			        channel: '/' + chat.dom.chat.roomid.value,
+			        onSuccess: function (args) {
+			            chat.util.logSuccess('Chat room.');
+			            var logs = args.getExtensionValue('logs');
+			            if(logs != null){
+			                for (var i = 0; i < logs.length; i++) {
+			                    chat.util.logMessage(logs[i].alias, logs[i].text, false);
+			                }
+			            }
+			        },
+			        onFailure: function (args) {
+			            chat.util.logSuccess('Đang bị mất kết nối.');
+			        },
+			        onReceive: function (args) {            
+			            chat.util.logMessage(args.getData().alias, args.getData().text, args.getWasSentByMe());
+			        }
+			    });	    
+			});		
+		</script>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('span.me').append('<img src="https://scontent.fhan4-1.fna.fbcdn.net/v/t1.0-1/p160x160/45509200_2242163209442570_2787093888572063744_n.jpg?_nc_cat=104&amp;_nc_ht=scontent.fhan4-1.fna&amp;oh=9c991ed03fd016fd5c758e3f3b109551&amp;oe=5C736D16" style="display:block !important;" class="img_avatar">');
+			});
+		</script>
+	</body>
+</html>
